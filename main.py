@@ -59,6 +59,7 @@ def cmd_collect() -> None:
     nb_ignores = 0
     nb_erreurs = 0
     societes_traitees: set[str] = set()
+    rapports_inseres: list[dict] = []
 
     for i, rapport in enumerate(rapports, 1):
         url = rapport.get("url", "")
@@ -124,6 +125,11 @@ def cmd_collect() -> None:
             log(f"  → Sauvegardé en base (id={inserted.get('id')})")
             nb_nouveaux += 1
             societes_traitees.add(societe)
+            rapports_inseres.append({
+                "societe": societe,
+                "doc_titre": doc_titre,
+                "resume": analyse.get("resume"),
+            })
         else:
             log(f"  → [ERREUR] Insertion Supabase échouée")
             nb_erreurs += 1
@@ -134,7 +140,80 @@ def cmd_collect() -> None:
     log(f"  Nouveaux rapports   : {nb_nouveaux}")
     log(f"  Ignorés (doublons)  : {nb_ignores}")
     log(f"  Erreurs             : {nb_erreurs}")
+
+    date_str = datetime.now(timezone.utc).strftime("%d/%m/%Y")
+    subject = f"📈 Agent 3 BRVM — Nouveaux rapports analysés — {date_str}"
+    html_body = _build_collect_html(
+        nb_societes=len(SOCIETES),
+        nb_nouveaux=nb_nouveaux,
+        nb_erreurs=nb_erreurs,
+        rapports_inseres=rapports_inseres,
+        date_str=date_str,
+    )
+    log("Envoi de l'email récapitulatif collect...")
+    ok = send_report(subject=subject, html_body=html_body)
+    log("Email collect envoyé" if ok else "[AVERTISSEMENT] Échec envoi email collect")
+
     log("=== FIN COLLECT ===")
+
+
+# ---------------------------------------------------------------------------
+# Helper email collect
+# ---------------------------------------------------------------------------
+
+def _build_collect_html(
+    nb_societes: int,
+    nb_nouveaux: int,
+    nb_erreurs: int,
+    rapports_inseres: list[dict],
+    date_str: str,
+) -> str:
+    rows = ""
+    for r in rapports_inseres:
+        resume = r.get("resume") or "<em>Non disponible</em>"
+        if isinstance(resume, str) and len(resume) > 300:
+            resume = resume[:300] + "…"
+        rows += (
+            f"<tr>"
+            f"<td style='padding:8px;border:1px solid #ddd;font-weight:bold;'>{r['societe']}</td>"
+            f"<td style='padding:8px;border:1px solid #ddd;'>{r['doc_titre']}</td>"
+            f"<td style='padding:8px;border:1px solid #ddd;'>{resume}</td>"
+            f"</tr>"
+        )
+
+    if rapports_inseres:
+        table = (
+            "<table style='border-collapse:collapse;width:100%;margin-top:12px;'>"
+            "<thead><tr style='background:#2e7d32;color:white;'>"
+            "<th style='padding:10px;text-align:left;'>Société</th>"
+            "<th style='padding:10px;text-align:left;'>Titre</th>"
+            "<th style='padding:10px;text-align:left;'>Résumé Claude</th>"
+            f"</tr></thead><tbody>{rows}</tbody></table>"
+        )
+    else:
+        table = "<p style='color:#666;'>Aucun nouveau rapport inséré.</p>"
+
+    erreur_color = "#c62828" if nb_erreurs else "#666"
+    return (
+        "<html><body style='font-family:Arial,sans-serif;max-width:800px;margin:auto;'>"
+        "<div style='background:#2e7d32;color:white;padding:20px;border-radius:8px 8px 0 0;'>"
+        "<h1 style='margin:0;'>📈 Agent 3 BRVM</h1>"
+        f"<p style='margin:4px 0 0;'>Nouveaux rapports analysés — {date_str}</p>"
+        "</div>"
+        "<div style='padding:20px;background:#f9f9f9;'>"
+        "<table style='border-collapse:collapse;width:100%;'>"
+        f"<tr><td style='padding:8px;font-weight:bold;'>Sociétés scrapées</td><td style='padding:8px;'>{nb_societes}</td></tr>"
+        f"<tr style='background:#e8f5e9;'><td style='padding:8px;font-weight:bold;'>Nouveaux rapports insérés</td><td style='padding:8px;color:#2e7d32;font-weight:bold;'>{nb_nouveaux}</td></tr>"
+        f"<tr><td style='padding:8px;font-weight:bold;'>Erreurs</td><td style='padding:8px;color:{erreur_color};'>{nb_erreurs}</td></tr>"
+        "</table>"
+        "<h2 style='color:#2e7d32;'>Rapports insérés</h2>"
+        f"{table}"
+        "</div>"
+        "<div style='padding:12px 20px;background:#eee;border-radius:0 0 8px 8px;font-size:12px;color:#666;'>"
+        "⚠️ Cet email est généré automatiquement par l'Agent 3 BRVM. Ne pas répondre directement à ce message."
+        "</div>"
+        "</body></html>"
+    )
 
 
 # ---------------------------------------------------------------------------
@@ -158,11 +237,10 @@ def cmd_rapport(type_rapport: str) -> None:
     contenu = generate(rapports, type_rapport)
     log(f"Sujet : {contenu['subject']}")
 
-    log("Envoi de l'email via Gmail...")
+    log("Envoi de l'email via SMTP...")
     ok = send_report(
         subject=contenu["subject"],
-        body_html=contenu["body_html"],
-        body_text=contenu["body_text"],
+        html_body=contenu["body_html"],
     )
 
     if ok:
