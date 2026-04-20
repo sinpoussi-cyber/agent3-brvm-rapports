@@ -72,7 +72,7 @@ def cmd_collect() -> None:
 
         # Vérification doublon
         if doc_exists(url):
-            log(f"[SKIP] Document déjà analysé : {doc_titre}")
+            log(f"[SKIP] Déjà en base : {url}")
             nb_ignores += 1
             continue
 
