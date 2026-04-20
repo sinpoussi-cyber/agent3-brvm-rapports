@@ -14,7 +14,7 @@ from claude_analyzer import analyze
 from email_sender import send_report
 from report_generator import generate
 from supabase_client import (
-    doc_exists,
+    _get_client,
     get_rapports_recent,
     insert_rapport,
     mark_sent,
@@ -99,14 +99,15 @@ def cmd_collect() -> None:
     rapports = get_rapports(SOCIETES)
     log(f"{len(rapports)} rapport(s) trouvé(s) par le scraper")
 
+    supabase = _get_client()
     nb_nouveaux = 0
-    nb_ignores = 0
+    total_skipped = 0
     nb_erreurs = 0
     societes_traitees: set[str] = set()
     rapports_inseres: list[dict] = []
 
     for i, rapport in enumerate(rapports, 1):
-        url = rapport.get("url", "")
+        pdf_url = rapport.get("url", "")
         societe = rapport.get("societe", "?")
         doc_titre = rapport.get("doc_titre", "")
         annee = rapport.get("annee", "")
@@ -115,15 +116,16 @@ def cmd_collect() -> None:
         log(f"[{i}/{len(rapports)}] {societe} – {doc_titre} ({type_rapport} {annee})")
 
         # Vérification doublon
-        if doc_exists(url):
-            log(f"[SKIP] Déjà en base : {url}")
-            nb_ignores += 1
+        result = supabase.table("brvm_rapports_societes").select("id").eq("doc_url", pdf_url).execute()
+        if result.data:
+            log(f"[SKIP] Déjà en base : {pdf_url[:80]}")
+            total_skipped += 1
             continue
 
         # Téléchargement du PDF
-        log(f"  → Téléchargement : {url}")
+        log(f"  → Téléchargement : {pdf_url}")
         try:
-            resp = requests.get(url, headers=HEADERS_DL, timeout=30, verify=False)
+            resp = requests.get(pdf_url, headers=HEADERS_DL, timeout=30, verify=False)
             resp.raise_for_status()
             pdf_bytes = resp.content
             log(f"  → PDF reçu ({len(pdf_bytes) // 1024} Ko)")
@@ -138,7 +140,7 @@ def cmd_collect() -> None:
             societe=societe,
             doc_titre=doc_titre,
             pdf_bytes=pdf_bytes,
-            url=url,
+            url=pdf_url,
         )
         if analyse is None:
             log(f"  → [ERREUR] Analyse Claude échouée, rapport ignoré")
@@ -155,7 +157,7 @@ def cmd_collect() -> None:
             "annee": annee,
             "type_rapport": type_rapport,
             "doc_titre": doc_titre,
-            "doc_url": url,
+            "doc_url": pdf_url,
             "resume": analyse.get("resume"),
             "points_cles": analyse.get("points_cles"),
             "indicateurs": analyse.get("indicateurs"),
@@ -182,7 +184,7 @@ def cmd_collect() -> None:
     log(f"  Sociétés scrapées   : {len(SOCIETES)}")
     log(f"  Sociétés avec docs  : {len(societes_traitees)}")
     log(f"  Nouveaux rapports   : {nb_nouveaux}")
-    log(f"  Ignorés (doublons)  : {nb_ignores}")
+    log(f"  Ignorés (doublons)  : {total_skipped}")
     log(f"  Erreurs             : {nb_erreurs}")
 
     date_str = datetime.now(timezone.utc).strftime("%d/%m/%Y")
