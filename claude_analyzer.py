@@ -1,6 +1,7 @@
 import base64
 import json
 import os
+import time
 
 import anthropic
 from dotenv import load_dotenv
@@ -78,8 +79,8 @@ def analyze(societe: str, doc_titre: str, pdf_bytes: bytes, url: str) -> dict | 
 
     client = anthropic.Anthropic(api_key=api_key)
 
-    try:
-        message = client.messages.create(
+    def _call_claude() -> anthropic.types.Message:
+        return client.messages.create(
             model=MODEL,
             max_tokens=4096,
             messages=[
@@ -102,6 +103,17 @@ def analyze(societe: str, doc_titre: str, pdf_bytes: bytes, url: str) -> dict | 
                 }
             ],
         )
+
+    try:
+        message = _call_claude()
+    except anthropic.RateLimitError:
+        print(f"[RATE LIMIT] Rate limit atteint, attente 60 secondes... ({societe} – {doc_titre})")
+        time.sleep(60)
+        try:
+            message = _call_claude()
+        except anthropic.APIError as e:
+            print(f"[ERREUR] Echec après retry rate limit pour {societe} – {doc_titre} : {e}")
+            return None
     except anthropic.APIStatusError as e:
         print(f"[ERREUR] Claude API status {e.status_code} pour {societe} – {doc_titre} : {e.message}")
         return None

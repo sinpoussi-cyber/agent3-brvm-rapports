@@ -71,7 +71,7 @@ DEFAULT_SOCIETES = [
     {"nom": "VIVO ENERGY CI", "url": "https://www.brvm.org/fr/rapports-societe-cotes/vivo-energy-ci"},
 ]
 
-ANNEE_MIN = 2025
+ANNEE_MIN = 2024
 
 
 # ---------------------------------------------------------------------------
