@@ -1,5 +1,6 @@
 import argparse
 import sys
+import time
 import warnings
 from datetime import datetime, timezone
 
@@ -150,6 +151,7 @@ def cmd_collect() -> None:
         recommandation = analyse.get("recommandation") or {}
         decision = (recommandation.get("decision") or "N/A").upper()
         log(f"  → Analyse OK — Recommandation : {decision}")
+        time.sleep(3)
 
         # Insertion Supabase
         data = {

@@ -81,7 +81,7 @@ def analyze(societe: str, doc_titre: str, pdf_bytes: bytes, url: str) -> dict | 
     try:
         message = client.messages.create(
             model=MODEL,
-            max_tokens=2048,
+            max_tokens=4096,
             messages=[
                 {
                     "role": "user",
@@ -127,9 +127,13 @@ def analyze(societe: str, doc_titre: str, pdf_bytes: bytes, url: str) -> dict | 
 
 def _extraire_json(texte: str) -> dict | None:
     """Tente de parser du JSON depuis une chaîne, même entourée de texte."""
+    # Nettoie les blocs ```json ... ``` que Claude ajoute parfois
+    if "```" in texte:
+        texte = texte.split("```")[-2] if texte.count("```") >= 2 else texte.replace("```json", "").replace("```", "")
+
     # Tentative directe
     try:
-        return json.loads(texte)
+        return json.loads(texte.strip())
     except json.JSONDecodeError:
         pass
 
