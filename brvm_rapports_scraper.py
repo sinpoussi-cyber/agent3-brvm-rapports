@@ -23,8 +23,52 @@ HEADERS = {
 }
 
 DEFAULT_SOCIETES = [
-    "SONATEL", "ORANGE CI", "CORIS BANK", "BOA CI", "NSIA BANQUE",
-    "ECOBANK CI", "TOTAL CI", "PALMCI", "SETAO CI", "SODE CI", "ONATEL", "ETI",
+    {"nom": "LNB", "url": "https://www.brvm.org/fr/rapports-societe-cotes/lnb"},
+    {"nom": "FILTISAC CI", "url": "https://www.brvm.org/fr/rapports-societe-cotes/filtisac-ci"},
+    {"nom": "ECOBANK TG", "url": "https://www.brvm.org/fr/rapports-societe-cotes/ecobank-tg"},
+    {"nom": "ECOBANK CI", "url": "https://www.brvm.org/fr/rapports-societe-cotes/ecobank-ci"},
+    {"nom": "CORIS BANK", "url": "https://www.brvm.org/fr/rapports-societe-cotes/coris-bank-international"},
+    {"nom": "CIE CI", "url": "https://www.brvm.org/fr/rapports-societe-cotes/cie-ci"},
+    {"nom": "CFAO MOTORS CI", "url": "https://www.brvm.org/fr/rapports-societe-cotes/cfao-motors-ci"},
+    {"nom": "AGL", "url": "https://www.brvm.org/fr/rapports-societe-cotes/bollore-transport-logistics"},
+    {"nom": "BIIC", "url": "https://www.brvm.org/fr/rapports-societe-cotes/biic"},
+    {"nom": "BICI CI", "url": "https://www.brvm.org/fr/rapports-societe-cotes/bici-ci"},
+    {"nom": "BERNABE CI", "url": "https://www.brvm.org/fr/rapports-societe-cotes/bernabe-ci"},
+    {"nom": "BOA SN", "url": "https://www.brvm.org/fr/rapports-societe-cotes/bank-africa-sn"},
+    {"nom": "BOA NG", "url": "https://www.brvm.org/fr/rapports-societe-cotes/bank-africa-ng"},
+    {"nom": "BOA ML", "url": "https://www.brvm.org/fr/rapports-societe-cotes/bank-africa-ml"},
+    {"nom": "BOA CI", "url": "https://www.brvm.org/fr/rapports-societe-cotes/bank-africa-ci"},
+    {"nom": "BOA BN", "url": "https://www.brvm.org/fr/rapports-societe-cotes/bank-africa-bn"},
+    {"nom": "BOA BF", "url": "https://www.brvm.org/fr/rapports-societe-cotes/bank-africa-bf"},
+    {"nom": "AIR LIQUIDE CI", "url": "https://www.brvm.org/fr/rapports-societe-cotes/air-liquide-ci"},
+    {"nom": "SUCRIVOIRE", "url": "https://www.brvm.org/fr/rapports-societe-cotes/sucrivoire"},
+    {"nom": "SONATEL", "url": "https://www.brvm.org/fr/rapports-societe-cotes/sonatel"},
+    {"nom": "SOLIBRA", "url": "https://www.brvm.org/fr/rapports-societe-cotes/solibra"},
+    {"nom": "SOGB", "url": "https://www.brvm.org/fr/rapports-societe-cotes/sogb"},
+    {"nom": "SODECI", "url": "https://www.brvm.org/fr/rapports-societe-cotes/sodeci"},
+    {"nom": "SMB", "url": "https://www.brvm.org/fr/rapports-societe-cotes/smb"},
+    {"nom": "SITAB", "url": "https://www.brvm.org/fr/rapports-societe-cotes/sitab"},
+    {"nom": "SICOR", "url": "https://www.brvm.org/fr/rapports-societe-cotes/sicor"},
+    {"nom": "SIB", "url": "https://www.brvm.org/fr/rapports-societe-cotes/sib"},
+    {"nom": "SICABLE", "url": "https://www.brvm.org/fr/rapports-societe-cotes/sicable"},
+    {"nom": "SGB CI", "url": "https://www.brvm.org/fr/rapports-societe-cotes/sgb-ci"},
+    {"nom": "SETAO CI", "url": "https://www.brvm.org/fr/rapports-societe-cotes/setao-ci"},
+    {"nom": "SERVAIR CI", "url": "https://www.brvm.org/fr/rapports-societe-cotes/servair-abidjan-ci"},
+    {"nom": "SAPH CI", "url": "https://www.brvm.org/fr/rapports-societe-cotes/saph-ci"},
+    {"nom": "SAFCA CI", "url": "https://www.brvm.org/fr/rapports-societe-cotes/safca-ci"},
+    {"nom": "PALM CI", "url": "https://www.brvm.org/fr/rapports-societe-cotes/palm-ci"},
+    {"nom": "ORANGE CI", "url": "https://www.brvm.org/fr/rapports-societe-cotes/orange-ci"},
+    {"nom": "ORAGROUP", "url": "https://www.brvm.org/fr/rapports-societe-cotes/oragroup"},
+    {"nom": "ONATEL BF", "url": "https://www.brvm.org/fr/rapports-societe-cotes/onatel-bf"},
+    {"nom": "NSBC", "url": "https://www.brvm.org/fr/rapports-societe-cotes/nsbc"},
+    {"nom": "NESTLE CI", "url": "https://www.brvm.org/fr/rapports-societe-cotes/nestle-ci"},
+    {"nom": "NEI CEDA CI", "url": "https://www.brvm.org/fr/rapports-societe-cotes/nei-ceda-ci"},
+    {"nom": "TOTAL CI", "url": "https://www.brvm.org/fr/rapports-societe-cotes/total"},
+    {"nom": "TOTAL SENEGAL", "url": "https://www.brvm.org/fr/rapports-societe-cotes/total-senegal-sa"},
+    {"nom": "TRACTAFRIC CI", "url": "https://www.brvm.org/fr/rapports-societe-cotes/tractafric-ci"},
+    {"nom": "UNILEVER CI", "url": "https://www.brvm.org/fr/rapports-societe-cotes/unilever-ci"},
+    {"nom": "UNIWAX CI", "url": "https://www.brvm.org/fr/rapports-societe-cotes/uniwax-ci"},
+    {"nom": "VIVO ENERGY CI", "url": "https://www.brvm.org/fr/rapports-societe-cotes/vivo-energy-ci"},
 ]
 
 ANNEE_MIN = 2025
@@ -123,10 +167,10 @@ def _extraire_liens_pdf(soup: BeautifulSoup, url_base: str) -> list[dict]:
 # Public API
 # ---------------------------------------------------------------------------
 
-def get_rapports(societes: list[str] | None = None) -> list[dict]:
+def get_rapports(societes: list[dict] | None = None) -> list[dict]:
     """
-    Scrape la page BRVM des rapports et retourne les rapports PDF depuis 2025
-    pour les sociétés demandées.
+    Scrape la page dédiée de chaque société BRVM et retourne les rapports PDF
+    depuis 2025. Chaque élément de `societes` doit avoir les clés `nom` et `url`.
     """
     if societes is None:
         societes = DEFAULT_SOCIETES
@@ -134,60 +178,37 @@ def get_rapports(societes: list[str] | None = None) -> list[dict]:
     rapports: list[dict] = []
     urls_vues: set[str] = set()
 
-    # --- Page principale ---
-    soup_principale = _fetch(RAPPORTS_URL)
-    if soup_principale is None:
-        return rapports
+    for societe_info in societes:
+        nom = societe_info["nom"]
+        url_page = societe_info["url"]
 
-    # Collecte les liens directs vers des PDFs sur la page principale
-    liens_pdf = _extraire_liens_pdf(soup_principale, BASE_URL)
-
-    # Cherche aussi les sous-pages société (liens non-PDF qui pourraient
-    # mener à des pages de rapports individuelles)
-    sous_pages: list[str] = []
-    for tag in soup_principale.find_all("a", href=True):
-        href = tag["href"]
-        if _est_pdf(href):
-            continue
-        texte_lien = _contexte_lien(tag)
-        for societe in societes:
-            if _societe_dans_texte(societe, texte_lien):
-                url_sous = href if href.startswith("http") else urljoin(BASE_URL, href)
-                if url_sous not in sous_pages and BASE_URL in url_sous:
-                    sous_pages.append(url_sous)
-                break
-
-    # --- Sous-pages société ---
-    for url_sous in sous_pages:
-        soup_sous = _fetch(url_sous)
-        if soup_sous:
-            liens_pdf.extend(_extraire_liens_pdf(soup_sous, url_sous))
-
-    # --- Filtrage et construction des résultats ---
-    for lien in liens_pdf:
-        url = lien["url"]
-        titre = lien["titre"]
-        contexte = lien["contexte"]
-
-        if url in urls_vues:
+        soup = _fetch(url_page)
+        if soup is None:
             continue
 
-        texte_complet = f"{titre} {contexte} {url}"
-        annee = _extraire_annee(texte_complet)
-        if annee is None:
-            continue
+        liens_pdf = _extraire_liens_pdf(soup, url_page)
 
-        for societe in societes:
-            if _societe_dans_texte(societe, texte_complet):
-                urls_vues.add(url)
-                rapports.append({
-                    "url": url,
-                    "societe": societe,
-                    "annee": annee,
-                    "type_rapport": _detecter_type_rapport(titre),
-                    "doc_titre": titre or f"Document {societe} {annee}",
-                })
-                break
+        for lien in liens_pdf:
+            url = lien["url"]
+            titre = lien["titre"]
+            contexte = lien["contexte"]
+
+            if url in urls_vues:
+                continue
+
+            texte_complet = f"{titre} {contexte} {url}"
+            annee = _extraire_annee(texte_complet)
+            if annee is None:
+                continue
+
+            urls_vues.add(url)
+            rapports.append({
+                "url": url,
+                "societe": nom,
+                "annee": annee,
+                "type_rapport": _detecter_type_rapport(titre),
+                "doc_titre": titre or f"Document {nom} {annee}",
+            })
 
     print(f"[INFO] {len(rapports)} rapport(s) trouvé(s) pour {len(societes)} société(s)")
     return rapports

@@ -21,8 +21,52 @@ from supabase_client import (
 )
 
 SOCIETES = [
-    "SONATEL", "ORANGE CI", "CORIS BANK", "BOA CI", "NSIA BANQUE",
-    "ECOBANK CI", "TOTAL CI", "PALMCI", "SETAO CI", "SODE CI", "ONATEL", "ETI",
+    {"nom": "LNB", "url": "https://www.brvm.org/fr/rapports-societe-cotes/lnb"},
+    {"nom": "FILTISAC CI", "url": "https://www.brvm.org/fr/rapports-societe-cotes/filtisac-ci"},
+    {"nom": "ECOBANK TG", "url": "https://www.brvm.org/fr/rapports-societe-cotes/ecobank-tg"},
+    {"nom": "ECOBANK CI", "url": "https://www.brvm.org/fr/rapports-societe-cotes/ecobank-ci"},
+    {"nom": "CORIS BANK", "url": "https://www.brvm.org/fr/rapports-societe-cotes/coris-bank-international"},
+    {"nom": "CIE CI", "url": "https://www.brvm.org/fr/rapports-societe-cotes/cie-ci"},
+    {"nom": "CFAO MOTORS CI", "url": "https://www.brvm.org/fr/rapports-societe-cotes/cfao-motors-ci"},
+    {"nom": "AGL", "url": "https://www.brvm.org/fr/rapports-societe-cotes/bollore-transport-logistics"},
+    {"nom": "BIIC", "url": "https://www.brvm.org/fr/rapports-societe-cotes/biic"},
+    {"nom": "BICI CI", "url": "https://www.brvm.org/fr/rapports-societe-cotes/bici-ci"},
+    {"nom": "BERNABE CI", "url": "https://www.brvm.org/fr/rapports-societe-cotes/bernabe-ci"},
+    {"nom": "BOA SN", "url": "https://www.brvm.org/fr/rapports-societe-cotes/bank-africa-sn"},
+    {"nom": "BOA NG", "url": "https://www.brvm.org/fr/rapports-societe-cotes/bank-africa-ng"},
+    {"nom": "BOA ML", "url": "https://www.brvm.org/fr/rapports-societe-cotes/bank-africa-ml"},
+    {"nom": "BOA CI", "url": "https://www.brvm.org/fr/rapports-societe-cotes/bank-africa-ci"},
+    {"nom": "BOA BN", "url": "https://www.brvm.org/fr/rapports-societe-cotes/bank-africa-bn"},
+    {"nom": "BOA BF", "url": "https://www.brvm.org/fr/rapports-societe-cotes/bank-africa-bf"},
+    {"nom": "AIR LIQUIDE CI", "url": "https://www.brvm.org/fr/rapports-societe-cotes/air-liquide-ci"},
+    {"nom": "SUCRIVOIRE", "url": "https://www.brvm.org/fr/rapports-societe-cotes/sucrivoire"},
+    {"nom": "SONATEL", "url": "https://www.brvm.org/fr/rapports-societe-cotes/sonatel"},
+    {"nom": "SOLIBRA", "url": "https://www.brvm.org/fr/rapports-societe-cotes/solibra"},
+    {"nom": "SOGB", "url": "https://www.brvm.org/fr/rapports-societe-cotes/sogb"},
+    {"nom": "SODECI", "url": "https://www.brvm.org/fr/rapports-societe-cotes/sodeci"},
+    {"nom": "SMB", "url": "https://www.brvm.org/fr/rapports-societe-cotes/smb"},
+    {"nom": "SITAB", "url": "https://www.brvm.org/fr/rapports-societe-cotes/sitab"},
+    {"nom": "SICOR", "url": "https://www.brvm.org/fr/rapports-societe-cotes/sicor"},
+    {"nom": "SIB", "url": "https://www.brvm.org/fr/rapports-societe-cotes/sib"},
+    {"nom": "SICABLE", "url": "https://www.brvm.org/fr/rapports-societe-cotes/sicable"},
+    {"nom": "SGB CI", "url": "https://www.brvm.org/fr/rapports-societe-cotes/sgb-ci"},
+    {"nom": "SETAO CI", "url": "https://www.brvm.org/fr/rapports-societe-cotes/setao-ci"},
+    {"nom": "SERVAIR CI", "url": "https://www.brvm.org/fr/rapports-societe-cotes/servair-abidjan-ci"},
+    {"nom": "SAPH CI", "url": "https://www.brvm.org/fr/rapports-societe-cotes/saph-ci"},
+    {"nom": "SAFCA CI", "url": "https://www.brvm.org/fr/rapports-societe-cotes/safca-ci"},
+    {"nom": "PALM CI", "url": "https://www.brvm.org/fr/rapports-societe-cotes/palm-ci"},
+    {"nom": "ORANGE CI", "url": "https://www.brvm.org/fr/rapports-societe-cotes/orange-ci"},
+    {"nom": "ORAGROUP", "url": "https://www.brvm.org/fr/rapports-societe-cotes/oragroup"},
+    {"nom": "ONATEL BF", "url": "https://www.brvm.org/fr/rapports-societe-cotes/onatel-bf"},
+    {"nom": "NSBC", "url": "https://www.brvm.org/fr/rapports-societe-cotes/nsbc"},
+    {"nom": "NESTLE CI", "url": "https://www.brvm.org/fr/rapports-societe-cotes/nestle-ci"},
+    {"nom": "NEI CEDA CI", "url": "https://www.brvm.org/fr/rapports-societe-cotes/nei-ceda-ci"},
+    {"nom": "TOTAL CI", "url": "https://www.brvm.org/fr/rapports-societe-cotes/total"},
+    {"nom": "TOTAL SENEGAL", "url": "https://www.brvm.org/fr/rapports-societe-cotes/total-senegal-sa"},
+    {"nom": "TRACTAFRIC CI", "url": "https://www.brvm.org/fr/rapports-societe-cotes/tractafric-ci"},
+    {"nom": "UNILEVER CI", "url": "https://www.brvm.org/fr/rapports-societe-cotes/unilever-ci"},
+    {"nom": "UNIWAX CI", "url": "https://www.brvm.org/fr/rapports-societe-cotes/uniwax-ci"},
+    {"nom": "VIVO ENERGY CI", "url": "https://www.brvm.org/fr/rapports-societe-cotes/vivo-energy-ci"},
 ]
 
 HEADERS_DL = {
@@ -49,7 +93,7 @@ def log(msg: str) -> None:
 
 def cmd_collect() -> None:
     log("=== DÉBUT COLLECT ===")
-    log(f"Sociétés ciblées : {', '.join(SOCIETES)}")
+    log(f"Sociétés ciblées : {', '.join(s['nom'] for s in SOCIETES)}")
 
     log("Scraping de la page BRVM en cours...")
     rapports = get_rapports(SOCIETES)
