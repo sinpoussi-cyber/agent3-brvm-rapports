@@ -28,11 +28,18 @@ LABELS = {
 # Helpers HTML
 # ---------------------------------------------------------------------------
 
-def _badge_html(recommandation: dict | None) -> str:
+def _badge_html(recommandation) -> str:
     if not recommandation:
         return ""
-    decision = (recommandation.get("decision") or "").lower().strip()
-    justification = recommandation.get("justification", "")
+    if isinstance(recommandation, str):
+        decision = recommandation.lower().strip()
+        justification = ""
+    elif isinstance(recommandation, dict):
+        decision = (recommandation.get("decision") or "").lower().strip()
+        justification = recommandation.get("justification", "")
+    else:
+        decision = ""
+        justification = ""
     style, label = BADGE.get(decision, ("background:#888;color:#fff", decision.upper() or "N/A"))
     return (
         f'<span style="display:inline-block;padding:4px 12px;border-radius:4px;'
@@ -251,8 +258,15 @@ def _build_text(rapports: list[dict], label: str, date_str: str) -> str:
         resume = analyse.get("resume") or r.get("resume", "Résumé non disponible.")
         recommandation = analyse.get("recommandation") or r.get("recommandation") or {}
 
-        decision = (recommandation.get("decision") or "").upper()
-        justification = recommandation.get("justification", "")
+        if isinstance(recommandation, str):
+            decision = recommandation.upper().strip()
+            justification = ""
+        elif isinstance(recommandation, dict):
+            decision = (recommandation.get("decision") or "").upper()
+            justification = recommandation.get("justification", "")
+        else:
+            decision = ""
+            justification = ""
 
         lignes += [
             f"[{societe}] {type_r} {annee}",
