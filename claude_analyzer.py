@@ -1,6 +1,7 @@
 import base64
 import json
 import os
+import re
 import time
 
 import anthropic
@@ -127,7 +128,7 @@ def analyze(societe: str, doc_titre: str, pdf_bytes: bytes, url: str) -> dict | 
     raw_text = message.content[0].text.strip()
 
     # Extrait le JSON même si Claude ajoute du texte parasite autour
-    json_match = _extraire_json(raw_text)
+    json_match = parse_claude_response(raw_text)
     if json_match is None:
         print(f"[ERREUR] Réponse Claude non parseable pour {societe} – {doc_titre}")
         print(f"[DEBUG] Début de la réponse : {raw_text[:300]}")
@@ -137,26 +138,38 @@ def analyze(societe: str, doc_titre: str, pdf_bytes: bytes, url: str) -> dict | 
     return json_match
 
 
-def _extraire_json(texte: str) -> dict | None:
+def parse_claude_response(text: str) -> dict | None:
     """Tente de parser du JSON depuis une chaîne, même entourée de texte."""
-    # Nettoie les blocs ```json ... ``` que Claude ajoute parfois
-    if "```" in texte:
-        texte = texte.split("```")[-2] if texte.count("```") >= 2 else texte.replace("```json", "").replace("```", "")
-
-    # Tentative directe
-    try:
-        return json.loads(texte.strip())
-    except json.JSONDecodeError:
-        pass
-
-    # Cherche le premier { ... } valide
-    debut = texte.find("{")
-    fin = texte.rfind("}")
-    if debut != -1 and fin != -1 and fin > debut:
+    # Méthode 1 : extraire entre ```json et ```
+    match = re.search(r'```json\s*(.*?)\s*```', text, re.DOTALL)
+    if match:
         try:
-            return json.loads(texte[debut : fin + 1])
+            return json.loads(match.group(1))
         except json.JSONDecodeError:
             pass
+
+    # Méthode 2 : extraire entre ``` et ```
+    match = re.search(r'```\s*(.*?)\s*```', text, re.DOTALL)
+    if match:
+        try:
+            return json.loads(match.group(1))
+        except json.JSONDecodeError:
+            pass
+
+    # Méthode 3 : trouver le premier { et dernier }
+    start = text.find('{')
+    end = text.rfind('}')
+    if start != -1 and end != -1:
+        try:
+            return json.loads(text[start:end+1])
+        except json.JSONDecodeError:
+            pass
+
+    # Méthode 4 : parser le texte brut
+    try:
+        return json.loads(text.strip())
+    except json.JSONDecodeError:
+        pass
 
     return None
 
