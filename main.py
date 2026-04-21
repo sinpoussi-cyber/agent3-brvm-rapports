@@ -92,12 +92,21 @@ def log(msg: str) -> None:
 # Mode collect
 # ---------------------------------------------------------------------------
 
-def cmd_collect() -> None:
-    log("=== DÉBUT COLLECT ===")
-    log(f"Sociétés ciblées : {', '.join(s['nom'] for s in SOCIETES)}")
+BATCH_SLICES = {1: (0, 10), 2: (10, 20), 3: (20, 30), 4: (30, 40), 5: (40, 46)}
+
+
+def cmd_collect(batch: int | None = None) -> None:
+    if batch is not None:
+        start, end = BATCH_SLICES[batch]
+        societes = SOCIETES[start:end]
+        log(f"=== DÉBUT COLLECT BATCH {batch} ({start+1}-{end}) ===")
+    else:
+        societes = SOCIETES
+        log("=== DÉBUT COLLECT ===")
+    log(f"Sociétés ciblées : {', '.join(s['nom'] for s in societes)}")
 
     log("Scraping de la page BRVM en cours...")
-    rapports = get_rapports(SOCIETES)
+    rapports = get_rapports(societes)
     log(f"{len(rapports)} rapport(s) trouvé(s) par le scraper")
 
     supabase = _get_client()
@@ -177,13 +186,16 @@ def cmd_collect() -> None:
             nb_erreurs += 1
 
     log("=== RÉSUMÉ COLLECT ===")
-    log(f"  Sociétés scrapées   : {len(SOCIETES)}")
+    log(f"  Sociétés scrapées   : {len(societes)}")
     log(f"  Sociétés avec docs  : {len(societes_traitees)}")
     log(f"  Nouveaux rapports   : {nb_nouveaux}")
     log(f"  Ignorés (doublons)  : {total_skipped}")
     log(f"  Erreurs             : {nb_erreurs}")
 
-    log("=== FIN COLLECT ===")
+    if batch is not None:
+        log(f"=== FIN COLLECT BATCH {batch} ===")
+    else:
+        log("=== FIN COLLECT ===")
 
 
 # ---------------------------------------------------------------------------
@@ -248,6 +260,7 @@ Modes disponibles :
 
 Exemples :
   python main.py collect
+  python main.py collect --batch=1
   python main.py rapport-jour
 """,
     )
@@ -256,10 +269,17 @@ Exemples :
         choices=["collect", "rapport-jour", "rapport-hebdo", "rapport-mensuel"],
         help="Mode d'exécution",
     )
+    parser.add_argument(
+        "--batch",
+        type=int,
+        choices=[1, 2, 3, 4, 5],
+        default=None,
+        help="Tranche de sociétés à traiter (1-5). Sans argument : toutes les 46.",
+    )
     args = parser.parse_args()
 
     mode_map = {
-        "collect": cmd_collect,
+        "collect": lambda: cmd_collect(batch=args.batch),
         "rapport-jour": lambda: cmd_rapport("quotidien"),
         "rapport-hebdo": lambda: cmd_rapport("hebdo"),
         "rapport-mensuel": lambda: cmd_rapport("mensuel"),
