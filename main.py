@@ -69,8 +69,6 @@ SOCIETES = [
     {"nom": "UNIWAX CI", "url": "https://www.brvm.org/fr/rapports-societe-cotes/uniwax-ci"},
     {"nom": "VIVO ENERGY CI", "url": "https://www.brvm.org/fr/rapports-societe-cotes/vivo-energy-ci"},
 ]
-# TODO: retirer après validation — limite le collect aux 3 premières sociétés
-SOCIETES = SOCIETES[:3]
 
 HEADERS_DL = {
     "User-Agent": (
