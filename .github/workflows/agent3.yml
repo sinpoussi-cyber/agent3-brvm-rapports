@@ -2,15 +2,38 @@ name: Agent 3 - BRVM Rapports
 
 on:
   schedule:
-    - cron: '0 8 * * *'
-    - cron: '0 20 * * *'
-    - cron: '0 7 * * 1'
-    - cron: '0 7 1 * *'
+    - cron: '0 8 * * *'   # collect batch 1
+    - cron: '0 10 * * *'  # collect batch 2
+    - cron: '0 12 * * *'  # collect batch 3
+    - cron: '0 14 * * *'  # collect batch 4
+    - cron: '0 16 * * *'  # collect batch 5
+    - cron: '0 20 * * *'  # rapport journalier
+    - cron: '0 7 * * 1'   # rapport hebdo
+    - cron: '0 7 1 * *'   # rapport mensuel
   workflow_dispatch:
+    inputs:
+      batch:
+        description: 'Numéro du batch (1-5, ou 0 pour tous)'
+        required: false
+        default: '1'
+        type: choice
+        options:
+          - '1'
+          - '2'
+          - '3'
+          - '4'
+          - '5'
+          - '0'
 
 jobs:
-  collect-batch-1:
-    if: github.event_name == 'workflow_dispatch' || github.event.schedule == '0 8 * * *'
+  collect:
+    if: >
+      github.event_name == 'workflow_dispatch' ||
+      github.event.schedule == '0 8 * * *' ||
+      github.event.schedule == '0 10 * * *' ||
+      github.event.schedule == '0 12 * * *' ||
+      github.event.schedule == '0 14 * * *' ||
+      github.event.schedule == '0 16 * * *'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -34,120 +57,26 @@ jobs:
           echo "SMTP_PASSWORD=${{ secrets.SMTP_PASSWORD }}" >> .env
       - name: Create token.json
         run: echo '${{ secrets.GMAIL_TOKEN_JSON }}' > token.json
-      - name: Run collect batch 1 (sociétés 1-10)
-        run: python main.py collect --batch=1
-
-  collect-batch-2:
-    needs: collect-batch-1
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
-        with:
-          python-version: '3.11'
-      - name: Install dependencies
-        run: pip install requests beautifulsoup4 "anthropic==0.49.0" "supabase==2.10.0" python-dotenv google-auth google-auth-oauthlib google-api-python-client "httpx==0.27.0" "httpcore==1.0.9" "websockets>=13.0"
-      - name: Create .env
+      - name: Determine batch number
+        id: batch
         run: |
-          echo "SUPABASE_URL=${{ secrets.SUPABASE_URL }}" >> .env
-          echo "SUPABASE_KEY=${{ secrets.SUPABASE_KEY }}" >> .env
-          echo "ANTHROPIC_API_KEY=${{ secrets.ANTHROPIC_API_KEY }}" >> .env
-          echo "REPORT_EMAIL_FROM=${{ secrets.REPORT_EMAIL_FROM }}" >> .env
-          echo "REPORT_EMAIL_TO=${{ secrets.REPORT_EMAIL_TO }}" >> .env
-          echo "GMAIL_CLIENT_ID=${{ secrets.GMAIL_CLIENT_ID }}" >> .env
-          echo "GMAIL_CLIENT_SECRET=${{ secrets.GMAIL_CLIENT_SECRET }}" >> .env
-          echo "GMAIL_REFRESH_TOKEN=${{ secrets.GMAIL_REFRESH_TOKEN }}" >> .env
-          echo "SMTP_SERVER=${{ secrets.SMTP_SERVER }}" >> .env
-          echo "SMTP_PORT=${{ secrets.SMTP_PORT }}" >> .env
-          echo "SMTP_PASSWORD=${{ secrets.SMTP_PASSWORD }}" >> .env
-      - name: Create token.json
-        run: echo '${{ secrets.GMAIL_TOKEN_JSON }}' > token.json
-      - name: Run collect batch 2 (sociétés 11-20)
-        run: python main.py collect --batch=2
-
-  collect-batch-3:
-    needs: collect-batch-2
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
-        with:
-          python-version: '3.11'
-      - name: Install dependencies
-        run: pip install requests beautifulsoup4 "anthropic==0.49.0" "supabase==2.10.0" python-dotenv google-auth google-auth-oauthlib google-api-python-client "httpx==0.27.0" "httpcore==1.0.9" "websockets>=13.0"
-      - name: Create .env
-        run: |
-          echo "SUPABASE_URL=${{ secrets.SUPABASE_URL }}" >> .env
-          echo "SUPABASE_KEY=${{ secrets.SUPABASE_KEY }}" >> .env
-          echo "ANTHROPIC_API_KEY=${{ secrets.ANTHROPIC_API_KEY }}" >> .env
-          echo "REPORT_EMAIL_FROM=${{ secrets.REPORT_EMAIL_FROM }}" >> .env
-          echo "REPORT_EMAIL_TO=${{ secrets.REPORT_EMAIL_TO }}" >> .env
-          echo "GMAIL_CLIENT_ID=${{ secrets.GMAIL_CLIENT_ID }}" >> .env
-          echo "GMAIL_CLIENT_SECRET=${{ secrets.GMAIL_CLIENT_SECRET }}" >> .env
-          echo "GMAIL_REFRESH_TOKEN=${{ secrets.GMAIL_REFRESH_TOKEN }}" >> .env
-          echo "SMTP_SERVER=${{ secrets.SMTP_SERVER }}" >> .env
-          echo "SMTP_PORT=${{ secrets.SMTP_PORT }}" >> .env
-          echo "SMTP_PASSWORD=${{ secrets.SMTP_PASSWORD }}" >> .env
-      - name: Create token.json
-        run: echo '${{ secrets.GMAIL_TOKEN_JSON }}' > token.json
-      - name: Run collect batch 3 (sociétés 21-30)
-        run: python main.py collect --batch=3
-
-  collect-batch-4:
-    needs: collect-batch-3
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
-        with:
-          python-version: '3.11'
-      - name: Install dependencies
-        run: pip install requests beautifulsoup4 "anthropic==0.49.0" "supabase==2.10.0" python-dotenv google-auth google-auth-oauthlib google-api-python-client "httpx==0.27.0" "httpcore==1.0.9" "websockets>=13.0"
-      - name: Create .env
-        run: |
-          echo "SUPABASE_URL=${{ secrets.SUPABASE_URL }}" >> .env
-          echo "SUPABASE_KEY=${{ secrets.SUPABASE_KEY }}" >> .env
-          echo "ANTHROPIC_API_KEY=${{ secrets.ANTHROPIC_API_KEY }}" >> .env
-          echo "REPORT_EMAIL_FROM=${{ secrets.REPORT_EMAIL_FROM }}" >> .env
-          echo "REPORT_EMAIL_TO=${{ secrets.REPORT_EMAIL_TO }}" >> .env
-          echo "GMAIL_CLIENT_ID=${{ secrets.GMAIL_CLIENT_ID }}" >> .env
-          echo "GMAIL_CLIENT_SECRET=${{ secrets.GMAIL_CLIENT_SECRET }}" >> .env
-          echo "GMAIL_REFRESH_TOKEN=${{ secrets.GMAIL_REFRESH_TOKEN }}" >> .env
-          echo "SMTP_SERVER=${{ secrets.SMTP_SERVER }}" >> .env
-          echo "SMTP_PORT=${{ secrets.SMTP_PORT }}" >> .env
-          echo "SMTP_PASSWORD=${{ secrets.SMTP_PASSWORD }}" >> .env
-      - name: Create token.json
-        run: echo '${{ secrets.GMAIL_TOKEN_JSON }}' > token.json
-      - name: Run collect batch 4 (sociétés 31-40)
-        run: python main.py collect --batch=4
-
-  collect-batch-5:
-    needs: collect-batch-4
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
-        with:
-          python-version: '3.11'
-      - name: Install dependencies
-        run: pip install requests beautifulsoup4 "anthropic==0.49.0" "supabase==2.10.0" python-dotenv google-auth google-auth-oauthlib google-api-python-client "httpx==0.27.0" "httpcore==1.0.9" "websockets>=13.0"
-      - name: Create .env
-        run: |
-          echo "SUPABASE_URL=${{ secrets.SUPABASE_URL }}" >> .env
-          echo "SUPABASE_KEY=${{ secrets.SUPABASE_KEY }}" >> .env
-          echo "ANTHROPIC_API_KEY=${{ secrets.ANTHROPIC_API_KEY }}" >> .env
-          echo "REPORT_EMAIL_FROM=${{ secrets.REPORT_EMAIL_FROM }}" >> .env
-          echo "REPORT_EMAIL_TO=${{ secrets.REPORT_EMAIL_TO }}" >> .env
-          echo "GMAIL_CLIENT_ID=${{ secrets.GMAIL_CLIENT_ID }}" >> .env
-          echo "GMAIL_CLIENT_SECRET=${{ secrets.GMAIL_CLIENT_SECRET }}" >> .env
-          echo "GMAIL_REFRESH_TOKEN=${{ secrets.GMAIL_REFRESH_TOKEN }}" >> .env
-          echo "SMTP_SERVER=${{ secrets.SMTP_SERVER }}" >> .env
-          echo "SMTP_PORT=${{ secrets.SMTP_PORT }}" >> .env
-          echo "SMTP_PASSWORD=${{ secrets.SMTP_PASSWORD }}" >> .env
-      - name: Create token.json
-        run: echo '${{ secrets.GMAIL_TOKEN_JSON }}' > token.json
-      - name: Run collect batch 5 (sociétés 41-46)
-        run: python main.py collect --batch=5
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "num=${{ github.event.inputs.batch }}" >> $GITHUB_OUTPUT
+          elif [ "${{ github.event.schedule }}" = "0 8 * * *" ]; then
+            echo "num=1" >> $GITHUB_OUTPUT
+          elif [ "${{ github.event.schedule }}" = "0 10 * * *" ]; then
+            echo "num=2" >> $GITHUB_OUTPUT
+          elif [ "${{ github.event.schedule }}" = "0 12 * * *" ]; then
+            echo "num=3" >> $GITHUB_OUTPUT
+          elif [ "${{ github.event.schedule }}" = "0 14 * * *" ]; then
+            echo "num=4" >> $GITHUB_OUTPUT
+          elif [ "${{ github.event.schedule }}" = "0 16 * * *" ]; then
+            echo "num=5" >> $GITHUB_OUTPUT
+          else
+            echo "num=1" >> $GITHUB_OUTPUT
+          fi
+      - name: Run collect
+        run: python main.py collect --batch=${{ steps.batch.outputs.num }}
 
   rapport-jour:
     if: github.event.schedule == '0 20 * * *'
