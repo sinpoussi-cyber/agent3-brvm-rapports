@@ -83,7 +83,7 @@ def analyze(societe: str, doc_titre: str, pdf_bytes: bytes, url: str) -> dict | 
     def _call_claude() -> anthropic.types.Message:
         return client.messages.create(
             model=MODEL,
-            max_tokens=4096,
+            max_tokens=8000,
             messages=[
                 {
                     "role": "user",
