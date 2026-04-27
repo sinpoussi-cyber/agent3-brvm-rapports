@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(gh run *)",
+      "PowerShell(gh run list --limit 10 --json databaseId,status,conclusion,name,createdAt 2>&1)",
+      "Bash(git remote *)"
+    ]
+  }
+}

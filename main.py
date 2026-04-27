@@ -96,7 +96,7 @@ BATCH_SLICES = {1: (0, 10), 2: (10, 20), 3: (20, 30), 4: (30, 40), 5: (40, 46)}
 
 
 def cmd_collect(batch: int | None = None) -> None:
-    if batch is not None:
+    if batch is not None and batch != 0:
         start, end = BATCH_SLICES[batch]
         societes = SOCIETES[start:end]
         log(f"=== DÉBUT COLLECT BATCH {batch} ({start+1}-{end}) ===")
@@ -272,7 +272,7 @@ Exemples :
     parser.add_argument(
         "--batch",
         type=int,
-        choices=[1, 2, 3, 4, 5],
+        choices=[0, 1, 2, 3, 4, 5],
         default=None,
         help="Tranche de sociétés à traiter (1-5). Sans argument : toutes les 46.",
     )
