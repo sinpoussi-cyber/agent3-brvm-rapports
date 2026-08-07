@@ -1,5 +1,7 @@
 requests
 beautifulsoup4
+openai
+pypdf
 anthropic
 supabase
 python-dotenv
