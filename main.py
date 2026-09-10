@@ -50,7 +50,7 @@ SOCIETES = [
     {"nom": "SICOR", "url": "https://www.brvm.org/fr/rapports-societe-cotes/sicor"},
     {"nom": "SIB", "url": "https://www.brvm.org/fr/rapports-societe-cotes/sib"},
     {"nom": "SICABLE", "url": "https://www.brvm.org/fr/rapports-societe-cotes/sicable"},
-    {"nom": "SGB CI", "url": "https://www.brvm.org/fr/rapports-societe-cotes/sgb-ci"},
+    {"nom": "SGB CI", "url": "https://www.brvm.org/fr/rapports-societe-cotes/sgci"},
     {"nom": "SETAO CI", "url": "https://www.brvm.org/fr/rapports-societe-cotes/setao-ci"},
     {"nom": "SERVAIR CI", "url": "https://www.brvm.org/fr/rapports-societe-cotes/servair-abidjan-ci"},
     {"nom": "SAPH CI", "url": "https://www.brvm.org/fr/rapports-societe-cotes/saph-ci"},
