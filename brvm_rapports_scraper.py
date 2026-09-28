@@ -69,6 +69,8 @@ DEFAULT_SOCIETES = [
     {"nom": "UNILEVER CI", "url": "https://www.brvm.org/fr/rapports-societe-cotes/unilever-ci"},
     {"nom": "UNIWAX CI", "url": "https://www.brvm.org/fr/rapports-societe-cotes/uniwax-ci"},
     {"nom": "VIVO ENERGY CI", "url": "https://www.brvm.org/fr/rapports-societe-cotes/vivo-energy-ci"},
+    {"nom": "BRIDGE BANK GROUP CI", "url": "https://www.brvm.org/fr/rapports-societe-cotes/bbgci"},  # BBGC — admission sept. 2026
+    {"nom": "CROWN SIEM CI", "url": "https://www.brvm.org/fr/rapports-societe-cotes/crown-siem-ci"},  # SEMC — manquait dans la liste
 ]
 
 ANNEE_MIN = 2024
