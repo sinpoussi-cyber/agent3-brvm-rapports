@@ -68,6 +68,8 @@ SOCIETES = [
     {"nom": "UNILEVER CI", "url": "https://www.brvm.org/fr/rapports-societe-cotes/unilever-ci"},
     {"nom": "UNIWAX CI", "url": "https://www.brvm.org/fr/rapports-societe-cotes/uniwax-ci"},
     {"nom": "VIVO ENERGY CI", "url": "https://www.brvm.org/fr/rapports-societe-cotes/vivo-energy-ci"},
+    {"nom": "BRIDGE BANK GROUP CI", "url": "https://www.brvm.org/fr/rapports-societe-cotes/bbgci"},  # BBGC — admission sept. 2026
+    {"nom": "CROWN SIEM CI", "url": "https://www.brvm.org/fr/rapports-societe-cotes/crown-siem-ci"},  # SEMC — manquait dans la liste
 ]
 
 HEADERS_DL = {
@@ -92,7 +94,8 @@ def log(msg: str) -> None:
 # Mode collect
 # ---------------------------------------------------------------------------
 
-BATCH_SLICES = {1: (0, 10), 2: (10, 20), 3: (20, 30), 4: (30, 40), 5: (40, 46)}
+# Le dernier batch va jusqu'à la fin de la liste : une société ajoutée (ex. BBGC) n'est jamais oubliée
+BATCH_SLICES = {1: (0, 10), 2: (10, 20), 3: (20, 30), 4: (30, 40), 5: (40, len(SOCIETES))}
 
 
 def cmd_collect(batch: int | None = None) -> None:
@@ -274,7 +277,7 @@ Exemples :
         type=int,
         choices=[0, 1, 2, 3, 4, 5],
         default=None,
-        help="Tranche de sociétés à traiter (1-5). Sans argument : toutes les 46.",
+        help="Tranche de sociétés à traiter (1-5). Sans argument : toutes les sociétés de la liste.",
     )
     args = parser.parse_args()
 
