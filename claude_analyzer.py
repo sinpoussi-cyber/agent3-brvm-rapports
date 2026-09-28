@@ -176,6 +176,9 @@ def _analyze_deepseek(societe: str, doc_titre: str, pdf_bytes: bytes, url: str) 
             max_tokens=8000,
             temperature=0,
             response_format={"type": "json_object"},
+            # deepseek-v4-flash : « thinking » actif par défaut (consomme max_tokens,
+            # peut vider `content`). Désactivé : extraction JSON, pas de raisonnement requis.
+            extra_body={"thinking": {"type": "disabled"}},
             messages=[
                 {
                     "role": "system",
